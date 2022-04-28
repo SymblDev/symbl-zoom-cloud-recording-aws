@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Zoom Symbl Webhook Notifier
+Resources:
+  ApiGatewayApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: prod
+      MethodSettings:
+        - ResourcePath: /
+          HttpMethod: GET
+          
+  ZoomSymblWebhookNotifier:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      CodeUri: .
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Description: Zoom Symbl Webhook Notifier
+      MemorySize: 128
+      Timeout: 900
+      Policies:
+        Statement:
+          Sid: AllowZoomSymblWebhook
+          Effect: Allow
+          Action: lambda:InvokeFunction
+          Resource: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:*
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /zoomSymblWebhookNotifier
+            Method: get
+            RestApiId:
+              Ref: ApiGatewayApi

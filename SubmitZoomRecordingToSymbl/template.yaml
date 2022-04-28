@@ -1,0 +1,142 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: Submit the Zoom Recordings to Symbl
+Resources:
+  SubmitZoomRecordingToSymbl:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.9
+      CodeUri: .
+      Description: Submit the Zoom Recordings to Symbl
+      MemorySize: 512
+      Timeout: 60
+      Policies:
+        Statement:
+          - Sid: ReadWriteTable
+            Effect: Allow
+            Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:GetItem
+              - dynamodb:Query
+              - dynamodb:Scan
+              - dynamodb:BatchWriteItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+            Resource: arn:aws:dynamodb:*:*:table/zoom_recordings
+          - Sid: GetStreamRecords
+            Effect: Allow
+            Action: dynamodb:GetRecords
+            Resource: "arn:aws:dynamodb:*:*:table/zoom_recordings/stream/* "
+          - Sid: WriteLogStreamsAndGroups
+            Effect: Allow
+            Action:
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource: "*"
+          - Sid: CreateLogGroup
+            Effect: Allow
+            Action: logs:CreateLogGroup
+            Resource: "*"
+        Statement:
+          - Sid: ReadWriteTable
+            Effect: Allow
+            Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:GetItem
+              - dynamodb:Query
+              - dynamodb:Scan
+              - dynamodb:BatchWriteItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+            Resource: arn:aws:dynamodb:*:*:table/zoom_recordings_jobs
+          - Sid: GetStreamRecords
+            Effect: Allow
+            Action: dynamodb:GetRecords
+            Resource: "arn:aws:dynamodb:*:*:table/zoom_recordings_jobs/stream/* "
+          - Sid: WriteLogStreamsAndGroups
+            Effect: Allow
+            Action:
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource: "*"
+          - Sid: CreateLogGroup
+            Effect: Allow
+            Action: logs:CreateLogGroup
+            Resource: "*"
+        Statement:
+          - Sid: ReadWriteTable
+            Effect: Allow
+            Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:GetItem
+              - dynamodb:Query
+              - dynamodb:Scan
+              - dynamodb:BatchWriteItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+            Resource: arn:aws:dynamodb:*:*:table/zoom_recordings_jobs_count
+          - Sid: GetStreamRecords
+            Effect: Allow
+            Action: dynamodb:GetRecords
+            Resource: "arn:aws:dynamodb:*:*:table/zoom_recordings_jobs_count/stream/* "
+          - Sid: WriteLogStreamsAndGroups
+            Effect: Allow
+            Action:
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource: "*"
+          - Sid: CreateLogGroup
+            Effect: Allow
+            Action: logs:CreateLogGroup
+            Resource: "*"
+        Statement:
+          - Action:
+              - s3:GetObject
+              - s3:GetObjectAcl
+            Resource:
+              - arn:aws:s3:::zoom-s3-output
+              - arn:aws:s3:::zoom-s3-output/*
+            Effect: Allow
+        Statement:
+          - Action:
+              - sqs:DeleteMessage
+              - sqs:GetQueueUrl
+              - sqs:ListQueues
+              - sqs:ChangeMessageVisibility
+              - sqs:SendMessageBatch
+              - sqs:ReceiveMessage
+              - sqs:SendMessage
+              - sqs:GetQueueAttributes
+              - sqs:ListQueueTags
+              - sqs:ListDeadLetterSourceQueues
+              - sqs:DeleteMessageBatch
+              - sqs:ChangeMessageVisibilityBatch
+              - sqs:SetQueueAttributes
+            Effect: Allow
+            Resource:  !Sub arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:symbl-zoom  
+      Events:
+        SymblZoomSQS:
+          Type: SQS
+          Properties:
+            Queue: !Sub arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:symbl-zoom
+            BatchSize: 10
+      Environment:
+        Variables:
+          DYNAMO_DB_REGION: ${AWS::Region}
+          S3_OUTPUT_BUCKET_NAME: zoom-s3-output
+          CONCURRENCY_COUNT: '50'
+          DYNAMO_DB_RECORDINGS_JOBS_COUNT_TABLE: zoom_recordings_jobs_count
+          SYMBL_APP_ID: ReplaceWithYourAppId
+          SLEEP_TIME: '3'
+          DYNAMO_DB_RECORDINGS_JOBS_TABLE: zoom_recordings_jobs
+          SYMBL_WEBHOOK_URL: >-
+            ReplaceWithZoomSymblWebhookNotifierApiGatewayUrl
+          SNS_SYMBL_ZOOM_QUEUE: 'https://sqs.${AWS::Region}.amazonaws.com/${AWS::AccountId}/symbl-zoom'
+          SYMBL_BASE_API: 'https://api.symbl.ai'
+          SYMBL_APP_SECRET: >-
+            ReplaceWithYourAppSecret
+          DYNAMO_DB_RECORDINGS_TABLE: zoom_recordings
+      Layers:
+        - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:requests_layer:1'
+      ReservedConcurrentExecutions: 1

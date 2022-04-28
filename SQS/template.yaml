@@ -1,0 +1,26 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Create an Amazon SQS queue for Zoom Symbl Integration"
+Resources: 
+  SymblZoomQueue: 
+    Type: AWS::SQS::Queue
+    Properties: 
+      QueueName: "symbl-zoom"
+      VisibilityTimeout: 60
+      DelaySeconds: 5
+Outputs: 
+  QueueURL: 
+    Description: "URL of new Amazon SQS Queue"
+    Value: 
+      Ref: "SymblZoomQueue"
+  QueueARN: 
+    Description: "ARN of new AmazonSQS Queue"
+    Value: 
+      Fn::GetAtt: 
+        - "SymblZoomQueue"
+        - "Arn"
+  QueueName: 
+    Description: "Name of new Amazon SQS Queue"
+    Value: 
+      Fn::GetAtt: 
+        - "SymblZoomQueue"
+        - "QueueName"

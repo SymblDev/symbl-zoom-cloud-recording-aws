@@ -1,0 +1,141 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: Symbl Zoom Webhook Processor
+Resources:
+  ZoomSymblWebhook:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.9
+      CodeUri: .
+      Description: Symbl Zoom Webhook Processor
+      MemorySize: 512
+      Timeout: 900
+      Policies:
+        Statement:
+          - Sid: ReadWriteTable
+            Effect: Allow
+            Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:GetItem
+              - dynamodb:Query
+              - dynamodb:Scan
+              - dynamodb:BatchWriteItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+            Resource: arn:aws:dynamodb:*:*:table/zoom_recordings
+          - Sid: GetStreamRecords
+            Effect: Allow
+            Action: dynamodb:GetRecords
+            Resource: "arn:aws:dynamodb:*:*:table/zoom_recordings/stream/* "
+          - Sid: WriteLogStreamsAndGroups
+            Effect: Allow
+            Action:
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource: "*"
+          - Sid: CreateLogGroup
+            Effect: Allow
+            Action: logs:CreateLogGroup
+            Resource: "*"
+        Statement:
+          - Sid: ReadWriteTable
+            Effect: Allow
+            Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:GetItem
+              - dynamodb:Query
+              - dynamodb:Scan
+              - dynamodb:BatchWriteItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+            Resource: arn:aws:dynamodb:*:*:table/zoom_recordings_jobs
+          - Sid: GetStreamRecords
+            Effect: Allow
+            Action: dynamodb:GetRecords
+            Resource: "arn:aws:dynamodb:*:*:table/zoom_recordings_jobs/stream/* "
+          - Sid: WriteLogStreamsAndGroups
+            Effect: Allow
+            Action:
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource: "*"
+          - Sid: CreateLogGroup
+            Effect: Allow
+            Action: logs:CreateLogGroup
+            Resource: "*"
+        Statement:
+          - Sid: ReadWriteTable
+            Effect: Allow
+            Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:GetItem
+              - dynamodb:Query
+              - dynamodb:Scan
+              - dynamodb:BatchWriteItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+            Resource: arn:aws:dynamodb:*:*:table/zoom_recordings_jobs_count
+          - Sid: GetStreamRecords
+            Effect: Allow
+            Action: dynamodb:GetRecords
+            Resource: "arn:aws:dynamodb:*:*:table/zoom_recordings_jobs_count/stream/* "
+          - Sid: WriteLogStreamsAndGroups
+            Effect: Allow
+            Action:
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource: "*"
+          - Sid: CreateLogGroup
+            Effect: Allow
+            Action: logs:CreateLogGroup
+            Resource: "*"
+        Statement:
+          - Sid: ReadWriteTable
+            Effect: Allow
+            Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:GetItem
+              - dynamodb:Query
+              - dynamodb:Scan
+              - dynamodb:BatchWriteItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+            Resource: arn:aws:dynamodb:*:*:table/zoom_recordings_insights
+          - Sid: GetStreamRecords
+            Effect: Allow
+            Action: dynamodb:GetRecords
+            Resource: "arn:aws:dynamodb:*:*:table/zoom_recordings_insights/stream/* "
+          - Sid: WriteLogStreamsAndGroups
+            Effect: Allow
+            Action:
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource: "*"
+          - Sid: CreateLogGroup
+            Effect: Allow
+            Action: logs:CreateLogGroup
+            Resource: "*"
+        Statement:
+          - Action:
+              - s3:GetObject
+              - s3:GetObjectAcl
+            Resource:
+              - arn:aws:s3:::zoom-s3-output
+              - arn:aws:s3:::zoom-s3-output/*
+            Effect: Allow
+      Environment:
+        Variables:
+          DYNAMO_DB_REGION: ${AWS::Region}
+          S3_OUTPUT_BUCKET_NAME: zoom-s3-output
+          CONCURRENCY_COUNT: '50'
+          DYNAMO_DB_RECORDINGS_JOBS_COUNT_TABLE: zoom_recordings_jobs_count
+          SYMBL_APP_ID: ReplaceWithYourSymblAppId
+          DYNAMO_DB_RECORDINGS_INSIGHTS: zoom_recordings_insights
+          DYNAMO_DB_RECORDINGS_JOBS_TABLE: zoom_recordings_jobs
+          GPASS: ReplaceWithYourGmailPassword
+          SYMBL_APP_SECRET: >-
+            ReplaceWithYourSybmlAppSecret
+          DYNAMO_DB_RECORDINGS_TABLE: zoom_recordings
+      Layers:
+        - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:requests_layer:1'

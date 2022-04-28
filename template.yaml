@@ -1,0 +1,49 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Resources:
+ 
+  Layers:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: ./Layers/template.yaml
+  
+  ZoomSymblQueue:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: ./SQS/template.yaml
+
+  ZoomRecordingsDynamoDBTable:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: ./DynamoDB/template.yaml
+
+  S3Buckets:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: ./S3/template.yaml
+
+  ZoomSymblWebhook:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: ./ZoomSymblWebhook/template.yaml
+  
+  SubmitZoomRecordingToSymbl:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: ./SubmitZoomRecordingToSymbl/template.yaml
+
+  CopyZoomRecordingToS3:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: ./CopyZoomRecordingToS3/template.yaml
+
+  ZoomSymblWebhookNotifier:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: ./ZoomSymblWebhookNotifier/template.yaml
+
+  ZoomRecordingComplete:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: ./ZoomRecordingComplete/template.yaml

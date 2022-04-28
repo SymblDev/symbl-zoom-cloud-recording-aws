@@ -1,0 +1,12 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "ZoomSymblStack"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-3qdnmldv4xlf"
+s3_prefix = "ZoomSymblStack"
+region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM CAPABILITY_AUTO_EXPAND"
+disable_rollback = true
+image_repositories = []
