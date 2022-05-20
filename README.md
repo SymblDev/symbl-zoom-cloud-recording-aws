@@ -73,6 +73,17 @@ The custom Zoom Application has to be configured with the recording completed we
 6. Select the Event Types -> **Recording**
 7. Check-mark on the “All Recordings have completed” option
 
+# Configuring the Lambda for Asynchronous Execution
+
+Background - The SAM deploy command will help in building the Zoom Symbl Integration Stack. Every time, you perform a clean and deploy, you’ll notice the lambdas getting created with a unique name.
+
+Based on the specified architecture, two of the lambdas are executed in an asynchronous manner. Hence, you’ll have to configure the lambda for making a call to the respective lambdas. Please make sure to update the lambda function name for “**Zoom Recording Completed**” and for the “**Zoom Symbl Webhook Notifier**” lambda.
+
+![copyRecordingToS3](https://user-images.githubusercontent.com/2565797/169463283-d21a939b-43d0-4370-8bc2-5eb73a08ba10.png)
+
+![zoomSymblWebhook](https://user-images.githubusercontent.com/2565797/169463299-74c96521-be5f-4092-ad9b-de5a8a423e4b.png)
+
+
 # Configuring the Lambda Environment Variables
 
 This step is dedicated to configuring the lambda environment variables with the AWS Region, App Secret, Zoom JWT Token etc. You’ll learn how to configure them.
@@ -82,32 +93,37 @@ Here’s the high-level summary of the lambda function and its environment varia
 
 <table>
   <tr>
-   <td><strong>Lambda Function</strong>
+   <td>Lambda Function
    </td>
-   <td><strong>Environment Variable</strong>
+   <td>Environment Variable
    </td>
-   <td><strong>Description</strong>
+   <td>Description
    </td>
   </tr>
   <tr>
-   <td rowspan="2" >CopyZoomRecordingToS3
+   <td rowspan="2" ><strong>CopyZoomRecordingToS3</strong>
+<p>
+This lambda function is responsible for copying the zoom recordings to S3, persisting the metadata on DynamoDB, and sending a message to SQS for processing. This one is the “Producer” lambda as mentioned in the architecture
    </td>
    <td>ZOOM_JWT_TOKEN
    </td>
-   <td>Specify your custom zoom app JWT token
+   <td>Specify your custom Zoom app JWT token
    </td>
   </tr>
   <tr>
    <td>SNS_SYMBL_ZOOM_QUEUE
    </td>
-   <td>Set with the appropriate Region and Account Id 
+   <td>Set with the appropriate Region and Account ID \
+ \
 <a href="https://sqs.${AWS::Region}.amazonaws.com/${AWS::AccountId}/symbl-zoom">https://sqs.${AWS::Region}.amazonaws.com/${AWS::AccountId}/symbl-zoom</a>
 <p>
 Alternatively, you can get into the SQS queue named <strong>symbl-zoom</strong> and then copy the ARN
    </td>
   </tr>
   <tr>
-   <td rowspan="4" >SubmitZoomRecordingToSymbl
+   <td rowspan="4" ><strong>SubmitZoomRecordingToSymbl</strong>
+<p>
+This lambda function is responsible for submitting or posting the “Zoom” recordings to Symbl. This one is the “Consumer” lambda as mentioned in the architecture
    </td>
    <td>SYMBL_APP_ID
    </td>
@@ -133,7 +149,9 @@ Alternatively, you can get into the SQS queue named <strong>symbl-zoom</strong> 
    </td>
   </tr>
   <tr>
-   <td>ZoomSymblWebhook
+   <td rowspan="5" ><strong>ZoomSymblWebhook</strong>
+<p>
+This lambda function is responsible for post-processing of Symbl webhook notifications. This one is the “Notifier” lambda as mentioned in the architecture
    </td>
    <td>SYMBL_APP_ID
    </td>
@@ -141,24 +159,24 @@ Alternatively, you can get into the SQS queue named <strong>symbl-zoom</strong> 
    </td>
   </tr>
   <tr>
-   <td>
-   </td>
    <td>SYMBL_APP_SECRET
    </td>
    <td>ReplaceWithYourAppSecret
    </td>
   </tr>
   <tr>
-   <td>
-   </td>
    <td>DYNAMO_DB_REGION
    </td>
    <td>Set with the ${AWS::Region} ex: us-east-1
    </td>
   </tr>
   <tr>
-   <td>
+   <td>GMAILID
    </td>
+   <td>ReplaceWithYourGmailEmailId
+   </td>
+  </tr>
+  <tr>
    <td>GPASS
    </td>
    <td>ReplaceWithYourGmailPassword
