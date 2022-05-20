@@ -8,7 +8,7 @@ When it comes to building and deploying the components, You’ll see the templat
 
 # High Level Architecture
 
-![image](https://user-images.githubusercontent.com/2565797/165747732-5763aede-f53a-4023-8501-125552c42d72.png)
+![image](https://user-images.githubusercontent.com/2565797/169448048-69896a9f-dcce-4ec2-be64-3fc2135bfc01.png)
 
 # Prerequisites
 
