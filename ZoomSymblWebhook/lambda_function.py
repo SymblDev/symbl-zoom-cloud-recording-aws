@@ -18,6 +18,7 @@ recordings_jobs_count_table_name = os.environ['DYNAMO_DB_RECORDINGS_JOBS_COUNT_T
 concurrency_count = int(os.environ['CONCURRENCY_COUNT'])
 s3_bucket_output = os.environ['S3_OUTPUT_BUCKET_NAME']
 gpass = os.environ['GPASS']
+gmailId = os.environ['GMAILID']
 app_id = os.environ['SYMBL_APP_ID']
 app_secret = os.environ['SYMBL_APP_SECRET']
     
@@ -138,7 +139,7 @@ def send_email(url, host_email, topic, summary):
         summary_text = summary_text + '<p>' + summary_item['text'] + '</p>'
     
     body = f'<h4>Here is the Summary of Conversation</h4><p>{summary_text}</p><h4>Meeting Insights</h4>{url}'
-    gmail_instance.send_email(gpass, host_email, topic, body)
+    gmail_instance.send_email(gmailId, gpass, host_email, topic, body)
 
 def save_on_dynamo_db(job_id, job_status):
     

@@ -12,8 +12,9 @@ Resources:
       MemorySize: 512
       Timeout: 900
       Policies:
+        Version: '2012-10-17'
         Statement:
-          - Sid: ReadWriteTable
+          - Sid: ReadWriteTableZoomRecordings
             Effect: Allow
             Action:
               - dynamodb:BatchGetItem
@@ -24,22 +25,21 @@ Resources:
               - dynamodb:PutItem
               - dynamodb:UpdateItem
             Resource: arn:aws:dynamodb:*:*:table/zoom_recordings
-          - Sid: GetStreamRecords
+          - Sid: GetStreamRecordsZoomRecordings
             Effect: Allow
             Action: dynamodb:GetRecords
             Resource: "arn:aws:dynamodb:*:*:table/zoom_recordings/stream/* "
-          - Sid: WriteLogStreamsAndGroups
+          - Sid: WriteLogStreamsAndGroupsZoomRecordings
             Effect: Allow
             Action:
               - logs:CreateLogStream
               - logs:PutLogEvents
             Resource: "*"
-          - Sid: CreateLogGroup
+          - Sid: CreateLogGroupZoomRecordings
             Effect: Allow
             Action: logs:CreateLogGroup
             Resource: "*"
-        Statement:
-          - Sid: ReadWriteTable
+          - Sid: ReadWriteTableZoomRecordingsJobs
             Effect: Allow
             Action:
               - dynamodb:BatchGetItem
@@ -50,22 +50,21 @@ Resources:
               - dynamodb:PutItem
               - dynamodb:UpdateItem
             Resource: arn:aws:dynamodb:*:*:table/zoom_recordings_jobs
-          - Sid: GetStreamRecords
+          - Sid: GetStreamRecordsZoomRecordingsJobs
             Effect: Allow
             Action: dynamodb:GetRecords
             Resource: "arn:aws:dynamodb:*:*:table/zoom_recordings_jobs/stream/* "
-          - Sid: WriteLogStreamsAndGroups
+          - Sid: WriteLogStreamsAndGroupsZoomRecordingsJobs
             Effect: Allow
             Action:
               - logs:CreateLogStream
               - logs:PutLogEvents
             Resource: "*"
-          - Sid: CreateLogGroup
+          - Sid: CreateLogGroupZoomRecordingsJobs
             Effect: Allow
             Action: logs:CreateLogGroup
             Resource: "*"
-        Statement:
-          - Sid: ReadWriteTable
+          - Sid: ReadWriteTableZoomRecordingsJobsCount
             Effect: Allow
             Action:
               - dynamodb:BatchGetItem
@@ -76,22 +75,21 @@ Resources:
               - dynamodb:PutItem
               - dynamodb:UpdateItem
             Resource: arn:aws:dynamodb:*:*:table/zoom_recordings_jobs_count
-          - Sid: GetStreamRecords
+          - Sid: GetStreamRecordsZoomRecordingsJobsCount
             Effect: Allow
             Action: dynamodb:GetRecords
             Resource: "arn:aws:dynamodb:*:*:table/zoom_recordings_jobs_count/stream/* "
-          - Sid: WriteLogStreamsAndGroups
+          - Sid: WriteLogStreamsAndGroupsZoomRecordingsJobsCount
             Effect: Allow
             Action:
               - logs:CreateLogStream
               - logs:PutLogEvents
             Resource: "*"
-          - Sid: CreateLogGroup
+          - Sid: CreateLogGroupZoomRecordingsJobsCount
             Effect: Allow
             Action: logs:CreateLogGroup
             Resource: "*"
-        Statement:
-          - Sid: ReadWriteTable
+          - Sid: ReadWriteTableZoomRecordingsInsights
             Effect: Allow
             Action:
               - dynamodb:BatchGetItem
@@ -102,22 +100,22 @@ Resources:
               - dynamodb:PutItem
               - dynamodb:UpdateItem
             Resource: arn:aws:dynamodb:*:*:table/zoom_recordings_insights
-          - Sid: GetStreamRecords
+          - Sid: GetStreamRecordsZoomRecordingsInsights
             Effect: Allow
             Action: dynamodb:GetRecords
             Resource: "arn:aws:dynamodb:*:*:table/zoom_recordings_insights/stream/* "
-          - Sid: WriteLogStreamsAndGroups
+          - Sid: WriteLogStreamsAndGroupsZoomRecordingsInsights
             Effect: Allow
             Action:
               - logs:CreateLogStream
               - logs:PutLogEvents
             Resource: "*"
-          - Sid: CreateLogGroup
+          - Sid: CreateLogGroupZoomRecordingsInsights
             Effect: Allow
             Action: logs:CreateLogGroup
             Resource: "*"
-        Statement:
-          - Action:
+          - Sid: CreateLogGroupZoomS3Output
+            Action:
               - s3:GetObject
               - s3:GetObjectAcl
             Resource:
@@ -133,6 +131,7 @@ Resources:
           SYMBL_APP_ID: ReplaceWithYourSymblAppId
           DYNAMO_DB_RECORDINGS_INSIGHTS: zoom_recordings_insights
           DYNAMO_DB_RECORDINGS_JOBS_TABLE: zoom_recordings_jobs
+          GMAILID: ReplaceWithYourGmailEmailId
           GPASS: ReplaceWithYourGmailPassword
           SYMBL_APP_SECRET: >-
             ReplaceWithYourSybmlAppSecret

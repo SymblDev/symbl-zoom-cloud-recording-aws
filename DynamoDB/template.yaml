@@ -58,7 +58,7 @@ Resources:
       TableName: zoom_recordings_jobs_count
       AttributeDefinitions:
         - AttributeName: id
-          AttributeType: S
+          AttributeType: N
       KeySchema: 
         - 
           AttributeName: "id"

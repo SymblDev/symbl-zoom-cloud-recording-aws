@@ -7,8 +7,8 @@ class Gmail(object):
     # =============================================================================
     # SEND EMAIL FUNCTION
     # =============================================================================
-    def send_email(self, gpass, sent_to, sent_subject, sent_body):
-        sender_email ='dailataranjan@gmail.com'
+    def send_email(self, gmailId, gpass, sent_to, sent_subject, sent_body):
+        sender_email = gmailId
         receiver_email = sent_to
         password = gpass
         

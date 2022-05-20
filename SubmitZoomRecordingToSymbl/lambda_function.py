@@ -109,7 +109,12 @@ def check_concurrency_and_increment_counter():
     dynamodb_instance = dynamodb.ZoomDynamoDB(region)
     countItem = dynamodb_instance.query_by_Id(1, recordings_jobs_count_table_name)
     print(countItem)
-    
+
+    if(countItem == None):
+        save_response = dynamodb_instance.save(recordings_jobs_count_table_name, {'id': 1, 'count': 0})
+        countItem = dynamodb_instance.query_by_Id(1, recordings_jobs_count_table_name)
+        print(countItem)
+
     if(countItem != None):
         total_count = int(countItem['count'])
         
