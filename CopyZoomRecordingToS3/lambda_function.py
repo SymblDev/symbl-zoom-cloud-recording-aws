@@ -4,7 +4,7 @@ import io
 import uuid
 import boto3
 from lib import s3
-from lib import sns
+from lib import sqs
 from lib import ffmpeg
 from lib import dynamodb
 from subprocess import call
@@ -117,7 +117,7 @@ def processEvent(jsonData):
 def publish_message_to_queue(bucket, unique_id):
     
     message_to_publish = f'Initiate Recordings to Sybml with the Meeting UUID: {unique_id}'
-    sns_instance = sns.SNS(region_name)
-    sns_instance.publish_to_queue(sns_zoom_symbl_queue, message_to_publish, bucket, unique_id)
+    sqs_instance = sqs.SQS(region_name)
+    sqs_instance.publish_to_queue(sns_zoom_symbl_queue, message_to_publish, bucket, unique_id)
     print('Successfully published a message to queue')
  

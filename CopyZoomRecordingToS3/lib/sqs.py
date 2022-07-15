@@ -2,20 +2,11 @@ import boto3
 import json
 import logging
 
-class SNS(object):
+class SQS(object):
     
     def __init__(self, region_name):
         self.region_name = region_name
-        
-    def publish_message(self, arn, subject, message):
-        client = boto3.client('sns', region_name=self.region_name)
-        response = client.publish(
-            TargetArn=arn,
-            Message=json.dumps({'default': json.dumps(message)}),
-            Subject=subject,
-            MessageStructure='json'
-        )
-        
+    
     def publish_to_queue(self, queue_url, message_to_publish, bucket, unique_id):
         sqs = boto3.client('sqs')
         response = sqs.send_message(
